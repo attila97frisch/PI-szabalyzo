@@ -1,0 +1,44 @@
+% A Matlab szkript az alábbi értékadásokat tartalmazza.
+% A szkript nem várhat felhasználói beavatkozásra vagy konzolról történõ értékadásra
+
+% Td= % szabályozó deriválási ideje
+% phit1= % fázistartalék, ha Ap=1
+% wc1= % vágási frekvencia, ha Ap=1
+
+% Ap= % szabályozó erõsítése a megadott fázistartalékhoz
+% WPD= % folytonos szabályozó átviteli függvenye (tf objektum), Ap, Td alapjan
+
+% Ts= % mintavételi periódusidõ
+% DPD= % diszkrét szabályozó átviteli függvenye (tf objektum), WPD, Ts alapján
+
+
+% a1= % u(k-1) együtthatója a szabályozó differenciaegyenletében, DPD-bõl
+% a2= % u(k-2) együtthatója a szabályozó differenciaegyenletében, DPD-bõl
+% b0= % e(k) együtthatója a szabályozó differenciaegyenletében, DPD-bõl
+% b1= % e(k-1) együtthatója a szabályozó differenciaegyenletében, DPD-bõl
+% b2= % e(k-2) együtthatója a szabályozó differenciaegyenletében, DPD-bõl
+
+clear all;
+A= 5.5;
+Td=12.5;
+W1= tf(A, conv([12.5 1], [6.25 1]));
+W2= tf(1, [1 0]);
+Plant=W1*W2
+WPD=tf([12.5 1], [2.5 1])
+Wo= minreal(WPD*Plant);
+margin(Wo)
+phit1=-45.4;
+wc1=0.664;
+bode(Wo)
+wc=0.0534;
+Ap=10^(-39.7/20);
+WPD=tf(Ap*[12.5 1], [2.5 1])
+Wo=minreal(WPD*Plant);
+bode(Wo)
+Ts=(5*pi)/(90*wc);
+DPD=c2d(WPD, Ts, 'zoh')
+a1=0.2705;
+a2=0;
+b0=0.05176;
+b1=-0.04421;
+b2=0;
